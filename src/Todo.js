@@ -1,43 +1,23 @@
 import React from 'react';
 import TaskCard from './component/TaskCard';
-
-const task = {
-  id: Date.now (),
-  task: '',
-  isCompleted: true,
-  time: '',
-};
-
-const card = {
-  cardId: Date.now (),
-  cardTitle: '',
-  cardTime: '',
-  tasks: [task],
-};
+import card from './class/card';
+import task from './class/task';
 
 class ToDo extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
-      cards: [card],
+      cards: [new card()],
     };
   }
 
-  componentDidMount () {
-    this.setState (state =>
-      state.cards.map (
-        card => (card.id = Date.now ()),
-        card.tasks.map (task => (task.id = Date.now ()))
-      )
-    );
-  }
 
   /**
    *
    * Function to change the value of Card title
    *
-   * @param value : Value for text input to show.
-   * @param id  :   id of a card that is being accessed.
+   * @param {String} value : Value for text input to show.
+   * @param  {Number} id  :   id of a card that is being accessed.
    */
   handleInputChangeCard = (value, id) => {
     this.setState (state =>
@@ -107,21 +87,19 @@ class ToDo extends React.Component {
   handleInputFocusTask = (tid, cid) => {
     console.log (cid, 'cid');
 
-    const tasks = this.state.cards.map (card => card.id === cid);
-    console.log (tasks, 'tasksk');
-    if (true) {
-      this.setState (state =>
-        state.cards.map (
-          card =>
-            card.id === cid &&
-            card.tasks.splice (card.tasks.length, 0, {
-              id: Date.now (),
-              task: '',
-              isCompleted: false,
-              time: '',
-            })
-        )
+    // const tasks = this.state.cards.map (card => card.cardId === cid);
+    const task1 = this.state.cards.map(card=>
+      card.cardId===cid&&
+      card.tasks.findIndex(task=>task.id===tid)
       );
+      const card1= this.state.cards.map(card=>card.cardId===cid&&card.tasks.length)
+    console.log (task1, 'task111sk',card1);
+    if (task1[0] === card1[0]-1) {
+      this.setState(state=>
+        state.cards.map(card=>
+          card.cardId === cid &&
+          card.tasks.splice(card.tasks.length,0,new task())
+        ));
     }
 
     console.log ('Task Added');
@@ -136,25 +114,19 @@ class ToDo extends React.Component {
    * @param id  :   id of a card that is being accessed.
    */
   handleInputFocusCard = cid => {
-    console.log (
-      this.state.cards.findIndex (card => card.cardId === cid),
-      'abcde',
-      cid
-    );
+    // console.log ("true",
+    //   this.state.cards.findIndex (card => card.cardId === cid)
+      
+    // );
 
     if (
       this.state.cards.findIndex (card => card.cardId === cid) ===
       this.state.cards.length - 1
     ) {
-      console.log ('cardss');
+      // console.log ('cardss');
 
       this.setState (state =>
-        state.cards.splice (state.cards.length, 0, {
-          cardId: Date.now (),
-          cardTitle: '',
-          cardTime: '',
-          tasks: [task],
-        })
+        state.cards.splice (state.cards.length, 0, new card())
       );
     }
   };
