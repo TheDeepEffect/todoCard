@@ -7,10 +7,9 @@ class ToDo extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
-      cards: [new card()],
+      cards: [new card ()],
     };
   }
-
 
   /**
    *
@@ -34,8 +33,8 @@ class ToDo extends React.Component {
    * Funciton to handle change in inputs of Task component.
    * Checkboxes 
    *
-   * @param {string} value
-   * @param {number} id
+   * @param {String} value
+   * @param {Number} id
    * @param {string} name
    */
   handleInputChangeTask = (value, id, name) => {
@@ -85,21 +84,31 @@ class ToDo extends React.Component {
    * @param {} name
    */
   handleInputFocusTask = (tid, cid) => {
-    console.log (cid, 'cid');
 
-    // const tasks = this.state.cards.map (card => card.cardId === cid);
-    const task1 = this.state.cards.map(card=>
-      card.cardId===cid&&
-      card.tasks.findIndex(task=>task.id===tid)
+
+    const task1 = this.state.cards.map (
+      card =>
+        card.cardId === cid && card.tasks.filter(task=>task.id===tid));
+ 
+    
+    
+    
+    const card1 = this.state.cards.map (
+      card => card.cardId === cid && card.tasks.length
+    );
+    console.log (task1, 'task111sk', card1);
+    if (this.state.cards.findIndex(card=>card.cardId===cid && 
+      card.tasks.map(task=>task===task1[0][0]) 
+      ) === this.state.cards.findIndex(card=>card.cardId===cid && 
+        card.tasks.length)
+      ) {
+      this.setState (state =>
+        state.cards.map (
+          card =>
+            card.cardId === cid &&
+            card.tasks.splice (card.tasks.length, 0, new task ())
+        )
       );
-      const card1= this.state.cards.map(card=>card.cardId===cid&&card.tasks.length)
-    console.log (task1, 'task111sk',card1);
-    if (task1[0] === card1[0]-1) {
-      this.setState(state=>
-        state.cards.map(card=>
-          card.cardId === cid &&
-          card.tasks.splice(card.tasks.length,0,new task())
-        ));
     }
 
     console.log ('Task Added');
@@ -116,7 +125,7 @@ class ToDo extends React.Component {
   handleInputFocusCard = cid => {
     // console.log ("true",
     //   this.state.cards.findIndex (card => card.cardId === cid)
-      
+
     // );
 
     if (
@@ -126,7 +135,7 @@ class ToDo extends React.Component {
       // console.log ('cardss');
 
       this.setState (state =>
-        state.cards.splice (state.cards.length, 0, new card())
+        state.cards.splice (state.cards.length, 0, new card ())
       );
     }
   };
@@ -145,6 +154,66 @@ class ToDo extends React.Component {
       ? this.handleInputFocusCard (cid)
       : this.handleInputFocusTask (tid, cid);
   };
+  /**
+   * Delete cards if empty and multiple cards are there.
+   * and sort cards
+   * 
+   * @param {Number} cid : cardId of a card
+   * @param {String} text : Text in the input field
+   */
+  handleInputBlurCard=(cid,text)=>{
+    if(text.length<=1 && this.state.cards.length>1){
+      this.setState(
+        state=>
+        state.cards.length >1 &&
+        state.cards.splice(state.cards.findIndex(card=>card.cardId===cid),1)
+      );
+    }
+    this.setState(state=>state.cards.sort((a,b)=>
+      new Date(b.cardTime) - new Date(a.cardTime)))
+  };
+
+   /**
+   * Delete tasks in a card if empty and multiple tasks are there.
+   * 
+   * @param {Number} tid : id of a task
+   * @param {Number} cid : cardId of a card
+   * @param {String} text : Text in the input field
+   */
+  handleInputBlurTask=(tid,cid,text)=>{
+
+    const cardArray=this.state.cards.filter(card=>card.cardId===cid);
+    console.log(cardArray,"cardArray");
+    const tasksArray=cardArray.filter(card=>card.tasks);
+    console.log(tasksArray[0],"taskArray");
+
+    if(text.length <=1 && tasksArray[0].tasks.length>1){
+      this.setState(state=>
+        state.cards.filter(card=>card.cardId===cid &&
+          card.tasks.splice(card.tasks.findIndex(task=>task.id===tid),1)
+          ));
+    }
+    this.setState(state=>state.cards.map(card=>card.cardId===cid &&
+      card.tasks.sort((a,b)=>new Date(b.time)-new Date(a.time))))
+    
+    
+  };
+
+
+  /**
+   * Function to handle input onBlur to delete an empty element.
+   * 
+   * @param {Event} e
+   * @param {Number} cid
+   * @param {Number} tid
+   */
+  handleInputBlur = (e, cid, tid = 1) => {
+    const value=e.target.value;
+    const name = e.target.name;
+    name === 'cardTitle'
+      ? this.handleInputBlurCard (cid,value)
+      : this.handleInputBlurTask (tid, cid,value);
+  };
 
   render () {
     const renderCard = this.state.cards.map (card => (
@@ -152,6 +221,7 @@ class ToDo extends React.Component {
         <TaskCard
           onInputChange={this.handleInputChange}
           onInputFocus={this.handleInputFocus}
+          onInputBlur={this.handleInputBlur}
           cardProps={card}
         />
       </li>

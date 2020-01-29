@@ -12,6 +12,7 @@ const TaskCard = props => {
       <Task
         onInputChange={props.onInputChange}
         onInputFocus={props.onInputFocus}
+        onInputBlur={props.onInputBlur}
         taskProp={task}
         cardId={props.cardProps.cardId}
       />
@@ -28,6 +29,7 @@ const TaskCard = props => {
                   type="text"
                   placeholder="Title"
                   name="cardTitle"
+                  onBlur={e=>props.onInputBlur(e,props.cardProps.cardId)}
                   onChange={e =>
                     props.onInputChange (e, props.cardProps.cardId)}
                   value={props.cardProps.cardTitle}

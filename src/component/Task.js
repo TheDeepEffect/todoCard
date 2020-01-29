@@ -21,6 +21,7 @@ const Task = props => {
           placeholder="Task here..."
           name="task"
           value={props.task}
+          onBlur={e=>props.onInputBlur(e,props.cardId,props.taskProp.id)}
           onChange={e => props.onInputChange (e, props.taskProp.id)}
           onFocus={e => props.onInputFocus (e, props.cardId, props.taskProp.id)}
         />
